@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Showcase</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f0f0f;
+            height: 100vh;
+            padding: 15px;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+            text-shadow: none;
+        }
+
+        .upload-section {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .upload-button {
+            background: #3ea6ff;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s ease;
+        }
+
+        .upload-button:hover {
+            background: #2d8fd8;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .video-grid {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding-bottom: 10px;
+            padding-left: 45px;
+            padding-right: 45px;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .video-grid.grabbing {
+            cursor: grabbing;
+        }
+
+        .video-grid::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .video-grid::-webkit-scrollbar-track {
+            background: #1f1f1f;
+            border-radius: 4px;
+        }
+
+        .video-grid::-webkit-scrollbar-thumb {
+            background: #3f3f3f;
+            border-radius: 4px;
+        }
+
+        .video-grid::-webkit-scrollbar-thumb:hover {
+            background: #5f5f5f;
+        }
+
+        .scroll-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .scroll-button {
+            position: absolute;
+            top: 0;
+            background: rgba(31, 31, 31, 0.95);
+            border: 1px solid #3f3f3f;
+            width: 31px;
+            height: 140px;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            transition: background 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .scroll-button:hover {
+            background: rgba(62, 166, 255, 0.9);
+            border-color: #3ea6ff;
+            transform: scale(1.05);
+        }
+
+        .scroll-button.left {
+            left: 0;
+        }
+
+        .scroll-button.right {
+            right: 0;
+        }
+
+        .video-card {
+            background: #1f1f1f;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            min-width: 250px;
+            flex-shrink: 0;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.5);
+            background: #2a2a2a;
+        }
+
+        .video-card.active {
+            border: 3px solid #3ea6ff;
+            transform: scale(1.02);
+        }
+
+        .thumbnail {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+
+        .video-info {
+            padding: 8px;
+        }
+
+        .video-title {
+            font-size: 0.75em;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .video-description {
+            font-size: 0.65em;
+            color: #aaaaaa;
+            line-height: 1.4;
+        }
+
+        .video-meta {
+            font-size: 0.6em;
+            color: #888888;
+            margin-top: 4px;
+        }
+
+        .rating {
+            color: #ffd700;
+            font-size: 0.7em;
+        }
+
+        .player-section {
+            background: #1f1f1f;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .player-title {
+            font-size: 1.2em;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .video-player {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            background: #000;
+        }
+
+        .placeholder {
+            width: 100%;
+            height: 100%;
+            background: #0f0f0f;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaaaaa;
+            font-size: 1.2em;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .note {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 0.85em;
+        }
+
+        #playerContainer {
+            flex: 1;
+            min-height: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎸 Frenchy Jamography</h1>
+        
+        <div class="upload-section">
+            <input type="file" id="fileInput" accept=".json" />
+            <button class="upload-button" onclick="document.getElementById('fileInput').click()">
+                Upload Metadata JSON
+            </button>
+        </div>
+        
+        <div class="scroll-container">
+            <button class="scroll-button left" onclick="scrollLeftButton()">‹</button>
+            <div class="video-grid" id="videoGrid"></div>
+            <button class="scroll-button right" onclick="scrollRightButton()">›</button>
+        </div>
+        
+        <div class="player-section">
+            <h2 class="player-title" id="playerTitle">Select a video to play</h2>
+            <div id="playerContainer">
+                <div class="placeholder">
+                    Click on any video above to start watching
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const videos = [
+            {
+                id: 'nH1JznnGJv0',
+                title: 'Big Leg Emma @ Great Blue Heron Dance Tent',
+                description: '2006-07-xx',
+                thumbnail: 'https://img.youtube.com/vi/nH1JznnGJv0/hqdefault.jpg'
+            },
+            {
+                id: 'AZmMxm5tUBk',
+                title: 'Big Leg Emma @ Wellsboro Arts Center - BrokenHearted',
+                description: '2007-??-??',
+                thumbnail: 'https://img.youtube.com/vi/AZmMxm5tUBk/hqdefault.jpg'
+            },
+            {
+                id: 'ZcgPgIKI5Q4',
+                title: 'Big Leg Emma @ Wellsboro Arts Center - Rider',
+                description: '2007-??-??',
+                thumbnail: 'https://img.youtube.com/vi/ZcgPgIKI5Q4/hqdefault.jpg'
+            },
+            {
+                id: 'YxBwFXgsESU',
+                title: 'Big Leg Emma @ Wellsboro Arts Center - Perfect World',
+                description: '2007-??-??',
+                thumbnail: 'https://img.youtube.com/vi/YxBwFXgsESU/hqdefault.jpg'
+            },
+            {
+                id: 'y3LHCYZIPFg',
+                title: 'Big Leg Emma @ Wellsboro Arts Center - Peoples',
+                description: '2007-??-??',
+                thumbnail: 'https://img.youtube.com/vi/y3LHCYZIPFg/hqdefault.jpg'
+            },
+            {
+                id: 'QUJb2ZDQYMg',
+                title: 'Big Leg Emma @ Dunkirk Music on the Pier',
+                description: '2008-??-??',
+                thumbnail: 'https://img.youtube.com/vi/QUJb2ZDQYMg/hqdefault.jpg'
+            },
+            {
+                id: 'PH312oFBDI0',
+                title: 'Big Leg Emma @ Jamestown IceArena',
+                description: '2010-05-07',
+                thumbnail: 'https://img.youtube.com/vi/PH312oFBDI0/hqdefault.jpg'
+            },
+            {
+                id: 'xKokCrF97RA',
+                title: 'Big Leg Emma @ Docksiders - Toss the Feathers',
+                description: '2010-05-08',
+                thumbnail: 'https://img.youtube.com/vi/xKokCrF97RA/hqdefault.jpg'
+            },
+            {
+                id: 'WsnVb6z21Ys',
+                title: 'Frenchy Personal - Tears_Still_Flow',
+                description: '2010-09-03',
+                thumbnail: 'https://img.youtube.com/vi/WsnVb6z21Ys/hqdefault.jpg'
+            },
+            {
+                id: '_XiR_cBoQOs',
+                title: 'FrenchyJam - LED guitar & VDMX experiments',
+                description: '2010-10-30',
+                thumbnail: 'https://img.youtube.com/vi/_XiR_cBoQOs/hqdefault.jpg'
+            },
+            {
+                id: 'v74TL6Dwutk',
+                title: 'Frenchy Personal - crazy down riff',
+                description: '2010-10-30',
+                thumbnail: 'https://img.youtube.com/vi/v74TL6Dwutk/hqdefault.jpg'
+            },
+            {
+                id: '1wKNb50PsRo',
+                title: 'Frenchy Personal - crazy down riff backwards',
+                description: '2010-10-30',
+                thumbnail: 'https://img.youtube.com/vi/1wKNb50PsRo/hqdefault.jpg'
+            },
+            {
+                id: 'wvZEvi3ZyW4',
+                title: 'Climbdown - Song in progress & VDMX experiments',
+                description: '2011-01-01',
+                thumbnail: 'https://img.youtube.com/vi/wvZEvi3ZyW4/hqdefault.jpg'
+            },
+            {
+                id: 'IemosbvxTxU',
+                title: 'Big Leg Emma @ Fenton Grill - Love Song',
+                description: '2011-01-01',
+                thumbnail: 'https://img.youtube.com/vi/IemosbvxTxU/hqdefault.jpg'
+            },
+            {
+                id: 'ASXy7N9oZDE',
+                title: 'Big Leg Emma @ Club Infinity - Powderfinger',
+                description: '2011-04-02',
+                thumbnail: 'https://img.youtube.com/vi/ASXy7N9oZDE/hqdefault.jpg'
+            },
+            {
+                id: 'k9yQztmDTgE',
+                title: 'Big Leg Emma @ Club Infinity - Gene Martin',
+                description: '2011-05-21',
+                thumbnail: 'https://img.youtube.com/vi/k9yQztmDTgE/hqdefault.jpg'
+            },
+            {
+                id: 'pxKM5YkImOg',
+                title: 'Big Leg Emma @ Blue Heron MainStage - Cornfed',
+                description: '2011-07-02',
+                thumbnail: 'https://img.youtube.com/vi/pxKM5YkImOg/hqdefault.jpg'
+            },
+            {
+                id: 'lJAKRVeUEoc',
+                title: 'Big Leg Emma @ Blue Heron MainStage - Peoples',
+                description: '2011-07-02',
+                thumbnail: 'https://img.youtube.com/vi/lJAKRVeUEoc/hqdefault.jpg'
+            },
+            {
+                id: '_wiRs4k8j0Y',
+                title: 'Big Leg Emma @ Blue Heron DanceTent - Eyes So Blue',
+                description: '2011-07-03',
+                thumbnail: 'https://img.youtube.com/vi/_wiRs4k8j0Y/hqdefault.jpg'
+            },
+            {
+                id: 'SrPIqQEGYis',
+                title: 'Big Leg Emma @ Blue Heron DanceTent - Peanut Farmer',
+                description: '2011-07-03',
+                thumbnail: 'https://img.youtube.com/vi/SrPIqQEGYis/hqdefault.jpg'
+            },
+            {
+                id: 'MsC6FI_uO98',
+                title: 'Big Leg Emma @ Blue Heron DanceTent - Frenchy & Rad Solos',
+                description: '2011-07-03',
+                thumbnail: 'https://img.youtube.com/vi/MsC6FI_uO98/hqdefault.jpg'
+            },
+            {
+                id: '5NyAeIjweRs',
+                title: 'Big Leg Emma @ Blue Heron DanceTent - Roaming Mind',
+                description: '2011-07-03',
+                thumbnail: 'https://img.youtube.com/vi/5NyAeIjweRs/hqdefault.jpg'
+            },
+            {
+                id: 'nhB-sklLVYg',
+                title: 'Big Leg Emma @ Chaffee Gathering',
+                description: '2011-07-22',
+                thumbnail: 'https://img.youtube.com/vi/nhB-sklLVYg/hqdefault.jpg'
+            },
+            {
+                id: '-5cHFZQThEM',
+                title: 'Big Leg Emma @ Casino in Bemus w Rusted Root - Whisper',
+                description: '2011-09-24',
+                thumbnail: 'https://img.youtube.com/vi/-5cHFZQThEM/hqdefault.jpg'
+            },
+            {
+                id: 'JmJzWOniy1E',
+                title: 'Big Leg Emma @ Casino in Bemus w Rusted Root - Peoples',
+                description: '2011-09-24',
+                thumbnail: 'https://img.youtube.com/vi/JmJzWOniy1E/hqdefault.jpg'
+            },
+            {
+                id: 'ZnBA_7roDEs',
+                title: 'Big Leg Emma @ Ellicotteville Brew Fest',
+                description: '2011-10-08',
+                thumbnail: 'https://img.youtube.com/vi/ZnBA_7roDEs/hqdefault.jpg'
+            },
+            {
+                id: 'ZcgPgIKI5Q4',
+                title: 'Big Leg Emma @ Wellsville Creative Arts Center - Whisper',
+                description: '2011-10-28',
+                thumbnail: 'https://img.youtube.com/vi/ZcgPgIKI5Q4/hqdefault.jpg'
+            },
+            {
+                id: 'eUfGSL1ld9o',
+                title: 'Big Leg Emma @ Wellsville Creative Arts Center - Back to NY',
+                description: '2011-10-28',
+                thumbnail: 'https://img.youtube.com/vi/eUfGSL1ld9o/hqdefault.jpg'
+            },
+            {
+                id: '56BG2IdyyW8',
+                title: 'Big Leg Emma @ Wellsville Creative Arts Center - One More Cup of Coffee',
+                description: '2011-10-28',
+                thumbnail: 'https://img.youtube.com/vi/56BG2IdyyW8/hqdefault.jpg'
+            },
+            {
+                id: 'YxBwFXgsESU',
+                title: 'Big Leg Emma @ Club Infinity - Rockabye',
+                description: '2011-11-05',
+                thumbnail: 'https://img.youtube.com/vi/YxBwFXgsESU/hqdefault.jpg'
+            },
+            {
+                id: 'xKokCrF97RA',
+                title: 'Big Leg Emma @ Club Infinity - Whisper/Brick/Whisper',
+                description: '2011-11-05',
+                thumbnail: 'https://img.youtube.com/vi/xKokCrF97RA/hqdefault.jpg'
+            },
+            {
+                id: 'nIl4sSND82c',
+                title: 'Big Leg Emma @ Lakewood American Legion - Brick->Whisper',
+                description: '2011-11-13',
+                thumbnail: 'https://img.youtube.com/vi/nIl4sSND82c/hqdefault.jpg'
+            },
+            {
+                id: 'PH312oFBDI0',
+                title: 'Big Leg Emma @ Crooked I - Mexican Song',
+                description: '2011-11-23',
+                thumbnail: 'https://img.youtube.com/vi/PH312oFBDI0/hqdefault.jpg'
+            },
+            {
+                id: 'tlNaoIb10iA',
+                title: 'Big Leg Emma @ Crooked I - Daniel',
+                description: '2012-03-02',
+                thumbnail: 'https://img.youtube.com/vi/tlNaoIb10iA/hqdefault.jpg'
+            },
+            {
+                id: 'tlNaoIb10iA',
+                title: 'Big Leg Emma @ Crooked I - Rockabye',
+                description: '2012-03-02',
+                thumbnail: 'https://img.youtube.com/vi/tlNaoIb10iA/hqdefault.jpg'
+            },
+            {
+                id: 'r3r4pMLCtKw',
+                title: 'Big Leg Emma @ TourKickOff',
+                description: '2012-03-13',
+                thumbnail: 'https://img.youtube.com/vi/r3r4pMLCtKw/hqdefault.jpg'
+            },
+            {
+                id: 'rK1DOenJdig',
+                title: 'Big Leg Emma @ Tour2',
+                description: '2012-03-13',
+                thumbnail: 'https://img.youtube.com/vi/rK1DOenJdig/hqdefault.jpg'
+            },
+            {
+                id: '8Km9mWrixUg',
+                title: 'Big Leg Emma @ WashDC - Peoples',
+                description: '2012-03-14',
+                thumbnail: 'https://img.youtube.com/vi/8Km9mWrixUg/hqdefault.jpg'
+            },
+            {
+                id: 'psH7C-ZyNos',
+                title: 'Big Leg Emma @ DoubleDoor - Whisper',
+                description: '2012-03-21',
+                thumbnail: 'https://img.youtube.com/vi/psH7C-ZyNos/hqdefault.jpg'
+            },
+            {
+                id: 'bU25hwS_AJM',
+                title: 'Big Leg Emma @ HillCountryBBQnyc - ShadyGrove',
+                description: '2012-04-05',
+                thumbnail: 'https://img.youtube.com/vi/bU25hwS_AJM/hqdefault.jpg'
+            },
+            {
+                id: '0uOCQvhOQto',
+                title: 'Big Leg Emma @ Essex Art Center',
+                description: '2012-05-12',
+                thumbnail: 'https://img.youtube.com/vi/0uOCQvhOQto/hqdefault.jpg'
+            },
+            {
+                id: 'rITJ-VWVTV0',
+                title: 'Video to add',
+                description: '2011-??-??',
+                thumbnail: 'https://img.youtube.com/vi/rITJ-VWVTV0/hqdefault.jpg'
+            }
+        ];
+
+        let currentVideoId = null;
+
+        async function fetchVideoTitle(videoId) {
+            try {
+                const response = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
+                const data = await response.json();
+                return data.title;
+            } catch (error) {
+                return 'Video Title';
+            }
+        }
+
+        async function createVideoCards() {
+            const grid = document.getElementById('videoGrid');
+            
+            for (const video of videos) {
+                const title = await fetchVideoTitle(video.id);
+                
+                const card = document.createElement('div');
+                card.className = 'video-card';
+                card.onclick = () => playVideo(video.id, title);
+                
+                card.innerHTML = `
+                    <img src="${video.thumbnail}" alt="${title}" class="thumbnail">
+                    <div class="video-info">
+                        <div class="video-title">${title}</div>
+                        <div class="video-description">${video.description}</div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            }
+        }
+
+        function playVideo(videoId, title) {
+            currentVideoId = videoId;
+            
+            document.querySelectorAll('.video-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            event.currentTarget.classList.add('active');
+            
+            document.getElementById('playerTitle').textContent = title;
+            
+            const playerContainer = document.getElementById('playerContainer');
+            playerContainer.innerHTML = `
+                <iframe 
+                    class="video-player"
+                    src="https://www.youtube.com/embed/${videoId}?autoplay=1" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            `;
+        }
+
+        function scrollLeftButton() {
+            const grid = document.getElementById('videoGrid');
+            grid.scrollBy({ left: -300, behavior: 'smooth' });
+        }
+
+        function scrollRightButton() {
+            const grid = document.getElementById('videoGrid');
+            grid.scrollBy({ left: 300, behavior: 'smooth' });
+        }
+
+        // Mouse drag scrolling
+        let isDown = false;
+        let startX;
+        let scrollLeftPos;
+        let hasMoved = false;
+
+        const videoGrid = document.getElementById('videoGrid');
+
+        videoGrid.addEventListener('mousedown', (e) => {
+            // Don't start dragging if clicking on a video card
+            if (e.target.closest('.video-card')) {
+                return;
+            }
+            isDown = true;
+            hasMoved = false;
+            videoGrid.classList.add('grabbing');
+            startX = e.pageX - videoGrid.offsetLeft;
+            scrollLeftPos = videoGrid.scrollLeft;
+        });
+
+        videoGrid.addEventListener('mouseleave', () => {
+            isDown = false;
+            videoGrid.classList.remove('grabbing');
+        });
+
+        videoGrid.addEventListener('mouseup', () => {
+            isDown = false;
+            videoGrid.classList.remove('grabbing');
+        });
+
+        videoGrid.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            hasMoved = true;
+            const x = e.pageX - videoGrid.offsetLeft;
+            const walk = (x - startX) * 2;
+            videoGrid.scrollLeft = scrollLeftPos - walk;
+        });
+
+        // Prevent click events when dragging
+        videoGrid.addEventListener('click', (e) => {
+            if (hasMoved) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, true);
+
+        createVideoCards();
+    </script>
+</body>
+</html>
