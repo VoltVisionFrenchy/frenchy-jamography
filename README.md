@@ -11,3 +11,4 @@ a collection of jams, this time filtered for frenchy, next time filtered for you
 - Lots of metadata is wrong, should parse each video id and fix/update
 - Make sure all items from original Jamography note in Evernote are present
 - also how to handle any missing playlists from youtube
+- Comments that appear @ specific timestamps?
