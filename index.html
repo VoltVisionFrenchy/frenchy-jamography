@@ -32,7 +32,6 @@
             color: #ffffff;
             margin-bottom: 8px;
             font-size: 1.6em;
-            text-shadow: none;
         }
 
         .version-info {
@@ -213,33 +212,25 @@
             right: 0;
         }
 
-        .back-to-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: #3ea6ff;
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
+        .loading-indicator {
+            text-align: center;
+            color: #aaaaaa;
+            font-size: 1em;
+            padding: 20px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #3f3f3f;
+            border-top-color: #3ea6ff;
             border-radius: 50%;
-            cursor: pointer;
-            font-size: 24px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 1000;
+            animation: spin 1s linear infinite;
         }
 
-        .back-to-top.visible {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .back-to-top:hover {
-            background: #2d8fd8;
-            transform: scale(1.1);
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         .video-card {
@@ -336,6 +327,12 @@
             font-size: 1.2em;
             text-align: center;
             padding: 20px;
+        }
+
+        #playerIframe {
+            flex: 1;
+            display: flex;
+            min-height: 0;
         }
 
         .metadata-panel {
@@ -516,16 +513,9 @@
     </div>
 
     <div class="container">
-        <div style="background: linear-gradient(90deg, #ff0000, #00ff00, #0000ff); color: white; padding: 20px; text-align: center; font-size: 2em; font-weight: bold; border: 5px solid yellow; margin-bottom: 20px; animation: pulse 1s infinite;">
-            ✅ VERSION 108 DEPLOYED SUCCESSFULLY ✅
-        </div>
-        <style>
-            @keyframes pulse {
-                0%, 100% { transform: scale(1); }
-                50% { transform: scale(1.05); }
-            }
-        </style>
         <h1>🎸 Frenchy Jamography</h1>
+        <div class="version-info">Version: 109 - FIXED</div>
+        <div class="settings-hint-small">Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> for settings</div>
         
         <div class="upload-section">
             <div class="search-container">
@@ -540,8 +530,6 @@
             <div class="video-grid" id="videoGrid"></div>
             <button class="scroll-button right" onclick="scrollRightButton()">›</button>
         </div>
-        
-        <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
         
         <div class="player-section">
             <div class="player-container">
@@ -560,56 +548,45 @@
             </div>
         </div>
         
-        <div class="version-info" style="margin-top: 10px;">Version: 108 - JS Debug</div>
+        <div class="version-info" style="margin-top: 10px;">Version: 109 - FIXED</div>
         <div class="settings-hint-small" style="margin-top: 5px; margin-bottom: 0;">Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> for settings</div>
     </div>
 
     <script>
-        // Start with empty array - will be loaded from JSON file
+        console.log('🔴🔴🔴 VERSION 109 - SCRIPT IS RUNNING! 🔴🔴🔴');
+        
         let videos = [];
-
         let currentVideoId = null;
 
-        // Load JSON file on page load
         async function loadMetadataFromFile() {
             console.log('=== loadMetadataFromFile() started ===');
             const grid = document.getElementById('videoGrid');
             grid.innerHTML = '<div style="color: #aaaaaa; padding: 20px; text-align: center; width: 100%;"><div class="spinner"></div><div style="margin-top: 10px;">Loading videos...</div></div>';
             
             try {
-                console.log('Attempting to fetch video-metadata.json...');
+                console.log('Fetching video-metadata.json...');
                 const response = await fetch('video-metadata.json');
                 
-                console.log('Fetch response:', response);
                 console.log('Response status:', response.status);
-                console.log('Response OK:', response.ok);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 
-                console.log('Parsing JSON...');
                 const data = await response.json();
                 console.log('Successfully loaded', data.length, 'videos');
-                console.log('First video:', data[0]);
                 
                 videos = data;
-                console.log('Calling createVideoCards...');
                 await createVideoCards();
-                console.log('=== loadMetadataFromFile() completed successfully ===');
+                console.log('=== loadMetadataFromFile() completed ===');
                 
             } catch (error) {
-                console.error('=== ERROR in loadMetadataFromFile ===');
-                console.error('Error object:', error);
-                console.error('Error message:', error.message);
-                console.error('Error stack:', error.stack);
-                
-                // Show upload prompt with error details
+                console.error('ERROR loading metadata:', error);
                 grid.innerHTML = 
                     `<div style="color: #aaaaaa; padding: 20px; text-align: center; width: 100%;">
                         <div style="font-size: 1.2em; margin-bottom: 10px;">📁 Could not auto-load video-metadata.json</div>
                         <div style="margin-bottom: 10px; color: #ff6b6b; font-size: 0.9em;">Error: ${error.message}</div>
-                        <div style="margin-bottom: 15px;">Please upload your JSON file to continue:</div>
+                        <div style="margin-bottom: 15px;">Please upload your JSON file:</div>
                         <button class="upload-button" onclick="openSettings()" style="font-size: 1em; padding: 10px 25px;">
                             📤 Upload JSON File
                         </button>
@@ -651,12 +628,7 @@
                         const jsonData = JSON.parse(event.target.result);
                         videos = jsonData;
                         document.getElementById('videoGrid').innerHTML = '';
-                        console.log('=== Script loaded, initializing... ===');
-        updateVideoCount();
-        
-        // Load metadata on page load
-        console.log('=== Calling loadMetadataFromFile() ===');
-        loadMetadataFromFile();
+                        createVideoCards();
                         alert('Metadata loaded successfully!');
                         closeSettings();
                     } catch (error) {
@@ -679,16 +651,12 @@
 
         function displayMetadata(video) {
             const panel = document.getElementById('metadataPanel');
-            
             let metadataHTML = '<div class="metadata-title">📋 Video Metadata</div>';
             
             const allFields = Object.keys(video);
-            
             allFields.forEach(field => {
                 const value = video[field];
-                const displayValue = value !== null && value !== undefined && value !== '' 
-                    ? value 
-                    : '(empty)';
+                const displayValue = value !== null && value !== undefined && value !== '' ? value : '(empty)';
                 const isEmpty = value === null || value === undefined || value === '';
                 
                 metadataHTML += `
@@ -704,7 +672,7 @@
 
         async function createVideoCards() {
             const grid = document.getElementById('videoGrid');
-            grid.innerHTML = ''; // Clear existing cards
+            grid.innerHTML = '';
             
             if (videos.length === 0) {
                 grid.innerHTML = '<div style="color: #aaaaaa; padding: 20px; text-align: center; width: 100%;">No videos loaded. Press Ctrl+Shift+S to upload your JSON file.</div>';
@@ -714,23 +682,13 @@
             
             for (const video of videos) {
                 const title = await fetchVideoTitle(video.videoId);
-                
-                // Build search text from all metadata fields
-                const searchText = [
-                    title,
-                    video.song,
-                    video.venue,
-                    video.city,
-                    video.state,
-                    video.date
-                ].filter(Boolean).join(' ').toLowerCase();
+                const searchText = [title, video.song, video.venue, video.city, video.state, video.date].filter(Boolean).join(' ').toLowerCase();
                 
                 const card = document.createElement('div');
                 card.className = 'video-card';
                 card.dataset.searchtext = searchText;
                 card.onclick = () => playVideo(video, title);
                 
-                // Generate thumbnail URL from videoId
                 const thumbnailUrl = `https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`;
                 
                 card.innerHTML = `
@@ -755,7 +713,6 @@
             });
             
             event.currentTarget.classList.add('active');
-            
             document.getElementById('playerTitle').textContent = title;
             
             const playerContainer = document.getElementById('playerIframe');
@@ -790,9 +747,7 @@
         const videoGrid = document.getElementById('videoGrid');
 
         videoGrid.addEventListener('mousedown', (e) => {
-            if (e.target.closest('.video-card')) {
-                return;
-            }
+            if (e.target.closest('.video-card')) return;
             isDown = true;
             hasMoved = false;
             videoGrid.classList.add('grabbing');
@@ -841,9 +796,7 @@
             const cards = document.querySelectorAll('.video-card');
             let visibleCount = 0;
             cards.forEach(card => {
-                if (card.style.display !== 'none') {
-                    visibleCount++;
-                }
+                if (card.style.display !== 'none') visibleCount++;
             });
             document.getElementById('videoCount').textContent = `Showing ${visibleCount} video${visibleCount !== 1 ? 's' : ''}`;
         }
@@ -861,18 +814,17 @@
             cards.forEach(card => {
                 const searchText = card.dataset.searchtext || '';
                 const matches = searchText.includes(searchTerm);
-                
-                if (matches) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
+                card.style.display = matches ? 'block' : 'none';
             });
             
             updateVideoCount();
         });
 
-        createVideoCards();
+        // Initialize
+        console.log('Initializing app...');
+        updateVideoCount();
+        loadMetadataFromFile();
+        console.log('=== Initialization complete ===');
     </script>
 </body>
 </html>
