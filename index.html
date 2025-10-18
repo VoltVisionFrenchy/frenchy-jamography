@@ -551,7 +551,7 @@
             </div>
         </div>
         
-        <div class="version-info" style="margin-top: 10px;">Version: 102 - Auto-Load with Fallback</div>
+        <div class="version-info" style="margin-top: 10px;">Version: 104 - Simplified Load</div>
         <div class="settings-hint-small" style="margin-top: 5px; margin-bottom: 0;">Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> for settings</div>
     </div>
 
@@ -563,21 +563,35 @@
 
         // Load JSON file on page load
         async function loadMetadataFromFile() {
+            const grid = document.getElementById('videoGrid');
+            grid.innerHTML = '<div style="color: #aaaaaa; padding: 20px; text-align: center; width: 100%;"><div class="spinner"></div><div style="margin-top: 10px;">Loading videos...</div></div>';
+            
             try {
                 const response = await fetch('video-metadata.json');
+                
+                console.log('Fetch response status:', response.status);
+                console.log('Fetch response OK:', response.ok);
+                
                 if (!response.ok) {
-                    throw new Error('Could not load video-metadata.json');
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
+                
                 const data = await response.json();
+                console.log('Successfully loaded', data.length, 'videos');
+                
                 videos = data;
                 await createVideoCards();
+                
             } catch (error) {
                 console.error('Error loading metadata:', error);
-                // Show upload prompt
-                document.getElementById('videoGrid').innerHTML = 
+                console.error('Error details:', error.message);
+                
+                // Show upload prompt with error details
+                grid.innerHTML = 
                     `<div style="color: #aaaaaa; padding: 20px; text-align: center; width: 100%;">
                         <div style="font-size: 1.2em; margin-bottom: 10px;">📁 Could not auto-load video-metadata.json</div>
-                        <div style="margin-bottom: 15px;">This happens when opening the HTML file directly. Please upload your JSON file:</div>
+                        <div style="margin-bottom: 10px; color: #ff6b6b; font-size: 0.9em;">Error: ${error.message}</div>
+                        <div style="margin-bottom: 15px;">Please upload your JSON file to continue:</div>
                         <button class="upload-button" onclick="openSettings()" style="font-size: 1em; padding: 10px 25px;">
                             📤 Upload JSON File
                         </button>
