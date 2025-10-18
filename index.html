@@ -551,7 +551,7 @@
             </div>
         </div>
         
-        <div class="version-info" style="margin-top: 10px;">Version: 104 - Simplified Load</div>
+        <div class="version-info" style="margin-top: 10px;">Version: 105 - Debug Logging</div>
         <div class="settings-hint-small" style="margin-top: 5px; margin-bottom: 0;">Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> for settings</div>
     </div>
 
@@ -563,28 +563,37 @@
 
         // Load JSON file on page load
         async function loadMetadataFromFile() {
+            console.log('=== loadMetadataFromFile() started ===');
             const grid = document.getElementById('videoGrid');
             grid.innerHTML = '<div style="color: #aaaaaa; padding: 20px; text-align: center; width: 100%;"><div class="spinner"></div><div style="margin-top: 10px;">Loading videos...</div></div>';
             
             try {
+                console.log('Attempting to fetch video-metadata.json...');
                 const response = await fetch('video-metadata.json');
                 
-                console.log('Fetch response status:', response.status);
-                console.log('Fetch response OK:', response.ok);
+                console.log('Fetch response:', response);
+                console.log('Response status:', response.status);
+                console.log('Response OK:', response.ok);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 
+                console.log('Parsing JSON...');
                 const data = await response.json();
                 console.log('Successfully loaded', data.length, 'videos');
+                console.log('First video:', data[0]);
                 
                 videos = data;
+                console.log('Calling createVideoCards...');
                 await createVideoCards();
+                console.log('=== loadMetadataFromFile() completed successfully ===');
                 
             } catch (error) {
-                console.error('Error loading metadata:', error);
-                console.error('Error details:', error.message);
+                console.error('=== ERROR in loadMetadataFromFile ===');
+                console.error('Error object:', error);
+                console.error('Error message:', error.message);
+                console.error('Error stack:', error.stack);
                 
                 // Show upload prompt with error details
                 grid.innerHTML = 
@@ -633,9 +642,11 @@
                         const jsonData = JSON.parse(event.target.result);
                         videos = jsonData;
                         document.getElementById('videoGrid').innerHTML = '';
-                        updateVideoCount();
+                        console.log('=== Script loaded, initializing... ===');
+        updateVideoCount();
         
         // Load metadata on page load
+        console.log('=== Calling loadMetadataFromFile() ===');
         loadMetadataFromFile();
                         alert('Metadata loaded successfully!');
                         closeSettings();
