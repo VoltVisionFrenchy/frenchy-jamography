@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Video Showcase</title>
+    <title>Frenchy Jamography</title>
     <style>
         * {
             margin: 0;
@@ -30,22 +30,22 @@
         h1 {
             text-align: center;
             color: #ffffff;
-            margin-bottom: 8px;
-            font-size: 1.6em;
+            margin-bottom: 15px;
+            font-size: 1.8em;
         }
 
         .version-info {
             text-align: center;
             color: #666666;
-            font-size: 0.75em;
-            margin-bottom: 5px;
+            font-size: 0.7em;
+            margin-top: 8px;
         }
 
         .settings-hint-small {
             text-align: center;
             color: #444444;
             font-size: 0.65em;
-            margin-bottom: 10px;
+            margin-top: 3px;
         }
 
         .settings-hint-small kbd {
@@ -514,8 +514,6 @@
 
     <div class="container">
         <h1>🎸 Frenchy Jamography</h1>
-        <div class="version-info">Version: 109 - FIXED</div>
-        <div class="settings-hint-small">Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> for settings</div>
         
         <div class="upload-section">
             <div class="search-container">
@@ -548,26 +546,22 @@
             </div>
         </div>
         
-        <div class="version-info" style="margin-top: 10px;">Version: 109 - FIXED</div>
-        <div class="settings-hint-small" style="margin-top: 5px; margin-bottom: 0;">Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> for settings</div>
+        <div class="version-info">Version: 2025-10-18</div>
+        <div class="settings-hint-small">Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> for settings</div>
     </div>
 
     <script>
-        console.log('🔴🔴🔴 VERSION 109 - SCRIPT IS RUNNING! 🔴🔴🔴');
+        console.log('🎵 Frenchy Jamography - Version 2025-10-18 🎵');
         
         let videos = [];
         let currentVideoId = null;
 
         async function loadMetadataFromFile() {
-            console.log('=== loadMetadataFromFile() started ===');
             const grid = document.getElementById('videoGrid');
             grid.innerHTML = '<div style="color: #aaaaaa; padding: 20px; text-align: center; width: 100%;"><div class="spinner"></div><div style="margin-top: 10px;">Loading videos...</div></div>';
             
             try {
-                console.log('Fetching video-metadata.json...');
                 const response = await fetch('video-metadata.json');
-                
-                console.log('Response status:', response.status);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -578,7 +572,6 @@
                 
                 videos = data;
                 await createVideoCards();
-                console.log('=== loadMetadataFromFile() completed ===');
                 
             } catch (error) {
                 console.error('ERROR loading metadata:', error);
@@ -821,10 +814,8 @@
         });
 
         // Initialize
-        console.log('Initializing app...');
         updateVideoCount();
         loadMetadataFromFile();
-        console.log('=== Initialization complete ===');
     </script>
 </body>
 </html>
