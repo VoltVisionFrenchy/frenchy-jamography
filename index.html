@@ -546,12 +546,23 @@
             </div>
         </div>
         
-        <div class="version-info">Version: 2025-10-18</div>
+        <div class="version-info" id="versionInfo">Loading version...</div>
         <div class="settings-hint-small">Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> for settings</div>
     </div>
 
     <script>
-        console.log('🎵 Frenchy Jamography - Version 2025-10-18 🎵');
+        // Version configuration - update VERSION when making significant changes
+        const VERSION = '1.0.5';
+        const BUILD_DATE = '2025-10-19'; // Update this when releasing (YYYY-MM-DD format)
+
+        // Format the date properly (avoiding timezone issues)
+        const [year, month, day] = BUILD_DATE.split('-');
+        const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        const versionString = `v${VERSION} (${dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })})`;
+
+        // Display version in UI and console
+        document.getElementById('versionInfo').textContent = versionString;
+        console.log(`🎵 Frenchy Jamography - ${versionString} 🎵`);
         
         let videos = [];
         let currentVideoId = null;
@@ -645,21 +656,29 @@
         function displayMetadata(video) {
             const panel = document.getElementById('metadataPanel');
             let metadataHTML = '<div class="metadata-title">📋 Video Metadata</div>';
-            
-            const allFields = Object.keys(video);
-            allFields.forEach(field => {
-                const value = video[field];
-                const displayValue = value !== null && value !== undefined && value !== '' ? value : '(empty)';
-                const isEmpty = value === null || value === undefined || value === '';
-                
-                metadataHTML += `
-                    <div class="metadata-field">
-                        <div class="metadata-label">${field}</div>
-                        <div class="metadata-value ${isEmpty ? 'empty' : ''}">${displayValue}</div>
-                    </div>
-                `;
+
+            // Define the field order: rating first, videoId last
+            const fieldOrder = ['rating', 'date', 'venue', 'city', 'state', 'song', 'comment', 'videoId'];
+
+            // Display fields in the specified order
+            fieldOrder.forEach(field => {
+                if (field in video) {
+                    const value = video[field];
+                    const displayValue = value !== null && value !== undefined && value !== '' ? value : '(empty)';
+                    const isEmpty = value === null || value === undefined || value === '';
+
+                    // Change "date" label to "Performance Date"
+                    const displayLabel = field === 'date' ? 'Performance Date' : field;
+
+                    metadataHTML += `
+                        <div class="metadata-field">
+                            <div class="metadata-label">${displayLabel}</div>
+                            <div class="metadata-value ${isEmpty ? 'empty' : ''}">${displayValue}</div>
+                        </div>
+                    `;
+                }
             });
-            
+
             panel.innerHTML = metadataHTML;
         }
 
