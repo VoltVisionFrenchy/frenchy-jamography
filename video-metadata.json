@@ -418,5 +418,60 @@
     "song": "",
     "comment": "Comment goes here",
     "rating": 0
+  },
+  {
+    "mediaType": "soundcloud",
+    "soundcloudUrl": "https://soundcloud.com/steve-french-5/big-leg-emma-2012-03-09",
+    "date": "2012-03-09",
+    "venue": "",
+    "city": "",
+    "state": "",
+    "song": "Big Leg Emma",
+    "comment": "",
+    "rating": 0
+  },
+  {
+    "mediaType": "soundcloud",
+    "soundcloudUrl": "https://soundcloud.com/steve-french-5/big-leg-emma-2012-03-09-1",
+    "date": "2012-03-09",
+    "venue": "",
+    "city": "",
+    "state": "",
+    "song": "Big Leg Emma",
+    "comment": "",
+    "rating": 0
+  },
+  {
+    "mediaType": "soundcloud",
+    "soundcloudUrl": "https://soundcloud.com/steve-french-5/big-leg-emma-2012-03-10-1",
+    "date": "2012-03-10",
+    "venue": "",
+    "city": "",
+    "state": "",
+    "song": "Big Leg Emma",
+    "comment": "",
+    "rating": 0
+  },
+  {
+    "mediaType": "soundcloud",
+    "soundcloudUrl": "https://soundcloud.com/steve-french-5/big-leg-emma-2012-03-10-2",
+    "date": "2012-03-10",
+    "venue": "",
+    "city": "",
+    "state": "",
+    "song": "Big Leg Emma",
+    "comment": "",
+    "rating": 0
+  },
+  {
+    "mediaType": "soundcloud",
+    "soundcloudUrl": "https://soundcloud.com/steve-french-5/2012-03-09-ble-clip-johnson",
+    "date": "2012-03-09",
+    "venue": "",
+    "city": "",
+    "state": "",
+    "song": "BLE Clip Johnson",
+    "comment": "",
+    "rating": 0
   }
 ]

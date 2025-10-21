@@ -262,6 +262,11 @@
             background: #f0f0f0;
         }
 
+        .thumbnail.soundcloud {
+            object-fit: cover;
+            object-position: center 20%;
+        }
+
         .video-info {
             padding: 8px;
         }
@@ -720,7 +725,7 @@
 
     <script>
         // Version configuration - update VERSION when making significant changes
-        const VERSION = '1.0.6';
+        const VERSION = '1.0.8';
         const BUILD_DATE = '2025-10-20'; // Update this when releasing (YYYY-MM-DD format)
 
         // Format the date properly (avoiding timezone issues)
@@ -821,12 +826,31 @@
             }
         }
 
+        async function fetchSoundCloudData(url) {
+            try {
+                const response = await fetch(`https://soundcloud.com/oembed?format=json&url=${encodeURIComponent(url)}`);
+                const data = await response.json();
+                return {
+                    title: data.title || 'SoundCloud Track',
+                    thumbnail: data.thumbnail_url || 'https://via.placeholder.com/250x140?text=SoundCloud'
+                };
+            } catch (error) {
+                console.error('Error fetching SoundCloud data:', error);
+                return {
+                    title: 'SoundCloud Track',
+                    thumbnail: 'https://via.placeholder.com/250x140?text=SoundCloud'
+                };
+            }
+        }
+
         function displayMetadata(video) {
             const panel = document.getElementById('metadataPanel');
-            let metadataHTML = '<div class="metadata-title">📋 Video Metadata</div>';
+            const isSoundCloud = video.mediaType === 'soundcloud';
+            const metadataTitle = isSoundCloud ? '📋 Audio Metadata' : '📋 Video Metadata';
+            let metadataHTML = `<div class="metadata-title">${metadataTitle}</div>`;
 
-            // Define the field order: rating first, videoId last
-            const fieldOrder = ['rating', 'date', 'venue', 'city', 'state', 'song', 'comment', 'videoId'];
+            // Define the field order: rating first, videoId/soundcloudUrl last
+            const fieldOrder = ['rating', 'date', 'venue', 'city', 'state', 'song', 'comment', 'mediaType', isSoundCloud ? 'soundcloudUrl' : 'videoId'];
 
             // Display fields in the specified order
             fieldOrder.forEach(field => {
@@ -835,8 +859,11 @@
                     const displayValue = value !== null && value !== undefined && value !== '' ? value : '(empty)';
                     const isEmpty = value === null || value === undefined || value === '';
 
-                    // Change "date" label to "Performance Date"
-                    const displayLabel = field === 'date' ? 'Performance Date' : field;
+                    // Change labels for better display
+                    let displayLabel = field;
+                    if (field === 'date') displayLabel = 'Performance Date';
+                    if (field === 'videoId') displayLabel = 'YouTube ID';
+                    if (field === 'soundcloudUrl') displayLabel = 'SoundCloud URL';
 
                     metadataHTML += `
                         <div class="metadata-field">
@@ -853,59 +880,86 @@
         async function createVideoCards() {
             const grid = document.getElementById('videoGrid');
             grid.innerHTML = '';
-            
+
             if (videos.length === 0) {
                 grid.innerHTML = '<div style="color: #aaaaaa; padding: 20px; text-align: center; width: 100%;">No videos loaded. Press Ctrl+Shift+S to upload your JSON file.</div>';
                 updateVideoCount();
                 return;
             }
-            
+
             for (const video of videos) {
-                const title = await fetchVideoTitle(video.videoId);
+                let title, thumbnailUrl;
+
+                if (video.mediaType === 'soundcloud') {
+                    const scData = await fetchSoundCloudData(video.soundcloudUrl);
+                    title = scData.title;
+                    thumbnailUrl = scData.thumbnail;
+                } else {
+                    title = await fetchVideoTitle(video.videoId);
+                    thumbnailUrl = `https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`;
+                }
+
                 const searchText = [title, video.song, video.venue, video.city, video.state, video.date].filter(Boolean).join(' ').toLowerCase();
-                
+
                 const card = document.createElement('div');
                 card.className = 'video-card';
                 card.dataset.searchtext = searchText;
                 card.onclick = () => playVideo(video, title);
-                
-                const thumbnailUrl = `https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`;
-                
+
+                const mediaIcon = video.mediaType === 'soundcloud' ? '🎵' : '';
+                const thumbnailClass = video.mediaType === 'soundcloud' ? 'thumbnail soundcloud' : 'thumbnail';
+
                 card.innerHTML = `
-                    <img src="${thumbnailUrl}" alt="${title}" class="thumbnail">
+                    <img src="${thumbnailUrl}" alt="${title}" class="${thumbnailClass}">
                     <div class="video-info">
-                        <div class="video-title">${title}</div>
+                        <div class="video-title">${mediaIcon} ${title}</div>
                         <div class="video-description">${video.date || ''}</div>
                     </div>
                 `;
-                
+
                 grid.appendChild(card);
             }
-            
+
             updateVideoCount();
         }
 
         function playVideo(video, title) {
-            currentVideoId = video.videoId;
-            
+            currentVideoId = video.videoId || video.soundcloudUrl;
+
             document.querySelectorAll('.video-card').forEach(card => {
                 card.classList.remove('active');
             });
-            
+
             event.currentTarget.classList.add('active');
             document.getElementById('playerTitle').textContent = title;
-            
+
             const playerContainer = document.getElementById('playerIframe');
-            playerContainer.innerHTML = `
-                <iframe 
-                    class="video-player"
-                    src="https://www.youtube.com/embed/${video.videoId}?autoplay=1" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
-            `;
-            
+
+            if (video.mediaType === 'soundcloud') {
+                // SoundCloud embed
+                const scUrl = encodeURIComponent(video.soundcloudUrl);
+                playerContainer.innerHTML = `
+                    <iframe
+                        class="video-player"
+                        scrolling="no"
+                        frameborder="no"
+                        allow="autoplay"
+                        src="https://w.soundcloud.com/player/?url=${scUrl}&color=%233ea6ff&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true">
+                    </iframe>
+                `;
+            } else {
+                // YouTube embed
+                playerContainer.innerHTML = `
+                    <iframe
+                        class="video-player"
+                        src="https://www.youtube.com/embed/${video.videoId}?autoplay=1"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                `;
+            }
+
             displayMetadata(video);
         }
 
