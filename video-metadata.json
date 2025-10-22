@@ -473,5 +473,203 @@
     "song": "BLE Clip Johnson",
     "comment": "",
     "rating": 0
+  },
+  {
+    "mediaType": "archive",
+    "archiveUrl": "https://archive.org/download/ble2011-08-27/BLE2011-08-27d1t01.mp3",
+    "date": "2011-08-27",
+    "venue": "Jammin' at the Vines",
+    "city": "Sheridan",
+    "state": "NY",
+    "song": "Sound Check",
+    "comment": "Disc 1, Track 1",
+    "rating": 0
+  },
+  {
+    "mediaType": "archive",
+    "archiveUrl": "https://archive.org/download/ble2011-08-27/BLE2011-08-27d1t02.mp3",
+    "date": "2011-08-27",
+    "venue": "Jammin' at the Vines",
+    "city": "Sheridan",
+    "state": "NY",
+    "song": "Intro",
+    "comment": "Disc 1, Track 2",
+    "rating": 0
+  },
+  {
+    "mediaType": "archive",
+    "archiveUrl": "https://archive.org/download/ble2011-08-27/BLE2011-08-27d1t03.mp3",
+    "date": "2011-08-27",
+    "venue": "Jammin' at the Vines",
+    "city": "Sheridan",
+    "state": "NY",
+    "song": "Two of Us",
+    "comment": "Disc 1, Track 3",
+    "rating": 0
+  },
+  {
+    "mediaType": "archive",
+    "archiveUrl": "https://archive.org/download/ble2011-08-27/BLE2011-08-27d1t04.mp3",
+    "date": "2011-08-27",
+    "venue": "Jammin' at the Vines",
+    "city": "Sheridan",
+    "state": "NY",
+    "song": "Charity Song",
+    "comment": "Disc 1, Track 4",
+    "rating": 0
+  },
+  {
+    "mediaType": "archive",
+    "archiveUrl": "https://archive.org/download/ble2011-08-27/BLE2011-08-27d1t05.mp3",
+    "date": "2011-08-27",
+    "venue": "Jammin' at the Vines",
+    "city": "Sheridan",
+    "state": "NY",
+    "song": "Daniel",
+    "comment": "Disc 1, Track 5",
+    "rating": 0
+  },
+  {
+    "mediaType": "archive",
+    "archiveUrl": "https://archive.org/download/ble2011-08-27/BLE2011-08-27d1t06.mp3",
+    "date": "2011-08-27",
+    "venue": "Jammin' at the Vines",
+    "city": "Sheridan",
+    "state": "NY",
+    "song": "Prophecy",
+    "comment": "Disc 1, Track 6",
+    "rating": 0
+  },
+  {
+    "mediaType": "archive",
+    "archiveUrl": "https://archive.org/download/ble2011-08-27/BLE2011-08-27d1t07.mp3",
+    "date": "2011-08-27",
+    "venue": "Jammin' at the Vines",
+    "city": "Sheridan",
+    "state": "NY",
+    "song": "Sometimes",
+    "comment": "Disc 1, Track 7",
+    "rating": 0
+  },
+  {
+    "mediaType": "archive",
+    "archiveUrl": "https://archive.org/download/ble2011-08-27/BLE2011-08-27d1t08.mp3",
+    "date": "2011-08-27",
+    "venue": "Jammin' at the Vines",
+    "city": "Sheridan",
+    "state": "NY",
+    "song": "Rockabye",
+    "comment": "Disc 1, Track 8",
+    "rating": 0
+  },
+  {
+    "mediaType": "archive",
+    "archiveUrl": "https://archive.org/download/ble2011-08-27/BLE2011-08-27d1t09.mp3",
+    "date": "2011-08-27",
+    "venue": "Jammin' at the Vines",
+    "city": "Sheridan",
+    "state": "NY",
+    "song": "Cornfed",
+    "comment": "Disc 1, Track 9",
+    "rating": 0
+  },
+  {
+    "mediaType": "archive",
+    "archiveUrl": "https://archive.org/download/ble2011-08-27/BLE2011-08-27d1t10.mp3",
+    "date": "2011-08-27",
+    "venue": "Jammin' at the Vines",
+    "city": "Sheridan",
+    "state": "NY",
+    "song": "Sing to Me",
+    "comment": "Disc 1, Track 10",
+    "rating": 0
+  },
+  {
+    "mediaType": "archive",
+    "archiveUrl": "https://archive.org/download/ble2011-08-27/BLE2011-08-27d2t01.mp3",
+    "date": "2011-08-27",
+    "venue": "Jammin' at the Vines",
+    "city": "Sheridan",
+    "state": "NY",
+    "song": "Back to New York",
+    "comment": "Disc 2, Track 1",
+    "rating": 0
+  },
+  {
+    "mediaType": "archive",
+    "archiveUrl": "https://archive.org/download/ble2011-08-27/BLE2011-08-27d2t02.mp3",
+    "date": "2011-08-27",
+    "venue": "Jammin' at the Vines",
+    "city": "Sheridan",
+    "state": "NY",
+    "song": "Bringing Young Dancers Onstage",
+    "comment": "Disc 2, Track 2",
+    "rating": 0
+  },
+  {
+    "mediaType": "archive",
+    "archiveUrl": "https://archive.org/download/ble2011-08-27/BLE2011-08-27d2t03.mp3",
+    "date": "2011-08-27",
+    "venue": "Jammin' at the Vines",
+    "city": "Sheridan",
+    "state": "NY",
+    "song": "Wall (Instrumental)",
+    "comment": "Disc 2, Track 3",
+    "rating": 0
+  },
+  {
+    "mediaType": "archive",
+    "archiveUrl": "https://archive.org/download/ble2011-08-27/BLE2011-08-27d2t04.mp3",
+    "date": "2011-08-27",
+    "venue": "Jammin' at the Vines",
+    "city": "Sheridan",
+    "state": "NY",
+    "song": "Peoples",
+    "comment": "Disc 2, Track 4",
+    "rating": 0
+  },
+  {
+    "mediaType": "archive",
+    "archiveUrl": "https://archive.org/download/ble2011-08-27/BLE2011-08-27d2t05.mp3",
+    "date": "2011-08-27",
+    "venue": "Jammin' at the Vines",
+    "city": "Sheridan",
+    "state": "NY",
+    "song": "Scotland > I Know You Rider",
+    "comment": "Disc 2, Track 5",
+    "rating": 0
+  },
+  {
+    "mediaType": "archive",
+    "archiveUrl": "https://archive.org/download/ble2011-08-27/BLE2011-08-27d2t06.mp3",
+    "date": "2011-08-27",
+    "venue": "Jammin' at the Vines",
+    "city": "Sheridan",
+    "state": "NY",
+    "song": "Waiting for Encore",
+    "comment": "Disc 2, Track 6",
+    "rating": 0
+  },
+  {
+    "mediaType": "archive",
+    "archiveUrl": "https://archive.org/download/ble2011-08-27/BLE2011-08-27d2t07.mp3",
+    "date": "2011-08-27",
+    "venue": "Jammin' at the Vines",
+    "city": "Sheridan",
+    "state": "NY",
+    "song": "Monkey",
+    "comment": "Disc 2, Track 7",
+    "rating": 0
+  },
+  {
+    "mediaType": "archive",
+    "archiveUrl": "https://archive.org/download/ble2011-08-27/BLE2011-08-27d2t08.mp3",
+    "date": "2011-08-27",
+    "venue": "Jammin' at the Vines",
+    "city": "Sheridan",
+    "state": "NY",
+    "song": "Frenchie Outro",
+    "comment": "Disc 2, Track 8",
+    "rating": 0
   }
 ]

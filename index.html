@@ -782,12 +782,16 @@
 
         function displayMetadata(video) {
             const panel = document.getElementById('metadataPanel');
-            const isSoundCloud = video.mediaType === 'soundcloud';
-            const metadataTitle = isSoundCloud ? '📋 Audio Metadata' : '📋 Video Metadata';
+            const isAudio = video.mediaType === 'soundcloud' || video.mediaType === 'archive';
+            const metadataTitle = isAudio ? '📋 Audio Metadata' : '📋 Video Metadata';
             let metadataHTML = `<div class="metadata-title">${metadataTitle}</div>`;
 
-            // Define the field order: rating first, videoId/soundcloudUrl last
-            const fieldOrder = ['rating', 'date', 'venue', 'city', 'state', 'song', 'comment', 'mediaType', isSoundCloud ? 'soundcloudUrl' : 'videoId'];
+            // Define the field order: rating first, videoId/soundcloudUrl/archiveUrl last
+            let lastField = 'videoId';
+            if (video.mediaType === 'soundcloud') lastField = 'soundcloudUrl';
+            if (video.mediaType === 'archive') lastField = 'archiveUrl';
+
+            const fieldOrder = ['rating', 'date', 'venue', 'city', 'state', 'song', 'comment', 'mediaType', lastField];
 
             // Display fields in the specified order
             fieldOrder.forEach(field => {
@@ -801,6 +805,7 @@
                     if (field === 'date') displayLabel = 'Performance Date';
                     if (field === 'videoId') displayLabel = 'YouTube ID';
                     if (field === 'soundcloudUrl') displayLabel = 'SoundCloud URL';
+                    if (field === 'archiveUrl') displayLabel = 'Archive.org URL';
 
                     metadataHTML += `
                         <div class="metadata-field">
@@ -831,6 +836,11 @@
                     const scData = await fetchSoundCloudData(video.soundcloudUrl);
                     title = scData.title;
                     thumbnailUrl = scData.thumbnail;
+                } else if (video.mediaType === 'archive') {
+                    // For Archive.org, use song name or a default title
+                    title = video.song || video.archiveTitle || 'Archive.org Track';
+                    // Use a generic music thumbnail for Archive.org tracks
+                    thumbnailUrl = video.archiveThumbnail || 'https://archive.org/download/ble2011-08-27/__ia_thumb.jpg';
                 } else {
                     title = await fetchVideoTitle(video.videoId);
                     thumbnailUrl = `https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`;
@@ -843,8 +853,8 @@
                 card.dataset.searchtext = searchText;
                 card.onclick = () => playVideo(video, title);
 
-                const mediaIcon = video.mediaType === 'soundcloud' ? '🎵' : '';
-                const thumbnailClass = video.mediaType === 'soundcloud' ? 'thumbnail soundcloud' : 'thumbnail';
+                const mediaIcon = (video.mediaType === 'soundcloud' || video.mediaType === 'archive') ? '🎵' : '';
+                const thumbnailClass = (video.mediaType === 'soundcloud' || video.mediaType === 'archive') ? 'thumbnail soundcloud' : 'thumbnail';
 
                 card.innerHTML = `
                     <img src="${thumbnailUrl}" alt="${title}" class="${thumbnailClass}">
@@ -861,7 +871,7 @@
         }
 
         function playVideo(video, title) {
-            currentVideoId = video.videoId || video.soundcloudUrl;
+            currentVideoId = video.videoId || video.soundcloudUrl || video.archiveUrl;
 
             document.querySelectorAll('.video-card').forEach(card => {
                 card.classList.remove('active');
@@ -883,6 +893,18 @@
                         allow="autoplay"
                         src="https://w.soundcloud.com/player/?url=${scUrl}&color=%233ea6ff&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true">
                     </iframe>
+                `;
+            } else if (video.mediaType === 'archive') {
+                // Archive.org HTML5 audio player
+                playerContainer.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: #000; border-radius: 8px; padding: 40px;">
+                        <div style="font-size: 3em; margin-bottom: 20px;">🎵</div>
+                        <div style="color: #ffffff; font-size: 1.2em; margin-bottom: 30px; text-align: center;">${title}</div>
+                        <audio controls autoplay style="width: 80%; max-width: 500px;">
+                            <source src="${video.archiveUrl}" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
                 `;
             } else {
                 // YouTube embed
