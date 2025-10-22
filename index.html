@@ -140,34 +140,27 @@
         }
 
         .video-grid {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 15px;
-            overflow-x: auto;
-            overflow-y: hidden;
-            padding-bottom: 10px;
-            padding-left: 45px;
-            padding-right: 45px;
-            cursor: grab;
-            user-select: none;
-        }
-
-        .video-grid.grabbing {
-            cursor: grabbing;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 15px;
+            max-height: 500px;
         }
 
         .video-grid::-webkit-scrollbar {
-            height: 8px;
+            width: 10px;
         }
 
         .video-grid::-webkit-scrollbar-track {
             background: #1f1f1f;
-            border-radius: 4px;
+            border-radius: 5px;
         }
 
         .video-grid::-webkit-scrollbar-thumb {
             background: #3f3f3f;
-            border-radius: 4px;
+            border-radius: 5px;
         }
 
         .video-grid::-webkit-scrollbar-thumb:hover {
@@ -175,41 +168,10 @@
         }
 
         .scroll-container {
-            position: relative;
-            margin-bottom: 12px;
-        }
-
-        .scroll-button {
-            position: absolute;
-            top: 0;
-            background: rgba(31, 31, 31, 0.95);
-            border: 1px solid #3f3f3f;
-            width: 31px;
-            height: 140px;
-            border-radius: 8px;
-            cursor: pointer;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: #ffffff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-            transition: background 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
-        }
-
-        .scroll-button:hover {
-            background: rgba(62, 166, 255, 0.9);
-            border-color: #3ea6ff;
-            transform: scale(1.05);
-        }
-
-        .scroll-button.left {
-            left: 0;
-        }
-
-        .scroll-button.right {
-            right: 0;
+            background: #1f1f1f;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            margin-top: 15px;
         }
 
         .loading-indicator {
@@ -234,14 +196,12 @@
         }
 
         .video-card {
-            background: #1f1f1f;
+            background: #2a2a2a;
             border-radius: 12px;
             overflow: hidden;
             cursor: pointer;
             transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            min-width: 250px;
-            flex-shrink: 0;
         }
 
         .video-card:hover {
@@ -292,10 +252,10 @@
             border-radius: 12px;
             padding: 15px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            flex: 1;
             display: flex;
             gap: 15px;
-            min-height: 0;
+            margin-bottom: 15px;
+            flex-shrink: 0;
         }
 
         .player-container {
@@ -315,14 +275,14 @@
 
         .video-player {
             width: 100%;
-            height: 450px;
+            height: 320px;
             border-radius: 8px;
             background: #000;
         }
 
         .placeholder {
             width: 100%;
-            height: 450px;
+            height: 320px;
             background: #0f0f0f;
             border-radius: 8px;
             display: flex;
@@ -348,6 +308,7 @@
             overflow-y: auto;
             min-width: 300px;
             max-width: 400px;
+            max-height: 380px;
             transition: max-height 0.3s ease, opacity 0.3s ease;
         }
 
@@ -540,22 +501,9 @@
             }
 
             .video-grid {
-                padding-left: 35px;
-                padding-right: 35px;
-            }
-
-            .scroll-button {
-                width: 28px;
-                height: 100px;
-                font-size: 20px;
-            }
-
-            .video-card {
-                min-width: 200px;
-            }
-
-            .thumbnail {
-                height: 112px;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                padding: 10px;
+                max-height: 300px;
             }
 
             .player-section {
@@ -609,12 +557,14 @@
                 font-size: 1.1em;
             }
 
-            .video-card {
-                min-width: 160px;
+            .video-grid {
+                grid-template-columns: 1fr;
+                padding: 8px;
+                max-height: 250px;
             }
 
             .thumbnail {
-                height: 90px;
+                height: 140px;
             }
 
             .video-title {
@@ -623,17 +573,6 @@
 
             .video-description {
                 font-size: 0.6em;
-            }
-
-            .scroll-button {
-                width: 24px;
-                height: 80px;
-                font-size: 18px;
-            }
-
-            .video-grid {
-                padding-left: 28px;
-                padding-right: 28px;
             }
 
             .player-section {
@@ -690,19 +629,13 @@
             </div>
             <span class="video-count" id="videoCount"></span>
         </div>
-        
-        <div class="scroll-container">
-            <button class="scroll-button left" onclick="scrollLeftButton()">‹</button>
-            <div class="video-grid" id="videoGrid"></div>
-            <button class="scroll-button right" onclick="scrollRightButton()">›</button>
-        </div>
-        
+
         <div class="player-section">
             <div class="player-container">
                 <h2 class="player-title" id="playerTitle">Select a video to play</h2>
                 <div id="playerIframe">
                     <div class="placeholder">
-                        Click on any video above to start watching
+                        Click on any video below to start watching
                     </div>
                 </div>
             </div>
@@ -717,6 +650,10 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="scroll-container">
+            <div class="video-grid" id="videoGrid"></div>
         </div>
         
         <div class="version-info" id="versionInfo">Loading version...</div>
@@ -963,57 +900,6 @@
             displayMetadata(video);
         }
 
-        function scrollLeftButton() {
-            const grid = document.getElementById('videoGrid');
-            grid.scrollBy({ left: -300, behavior: 'smooth' });
-        }
-
-        function scrollRightButton() {
-            const grid = document.getElementById('videoGrid');
-            grid.scrollBy({ left: 300, behavior: 'smooth' });
-        }
-
-        let isDown = false;
-        let startX;
-        let scrollLeftPos;
-        let hasMoved = false;
-
-        const videoGrid = document.getElementById('videoGrid');
-
-        videoGrid.addEventListener('mousedown', (e) => {
-            if (e.target.closest('.video-card')) return;
-            isDown = true;
-            hasMoved = false;
-            videoGrid.classList.add('grabbing');
-            startX = e.pageX - videoGrid.offsetLeft;
-            scrollLeftPos = videoGrid.scrollLeft;
-        });
-
-        videoGrid.addEventListener('mouseleave', () => {
-            isDown = false;
-            videoGrid.classList.remove('grabbing');
-        });
-
-        videoGrid.addEventListener('mouseup', () => {
-            isDown = false;
-            videoGrid.classList.remove('grabbing');
-        });
-
-        videoGrid.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            hasMoved = true;
-            const x = e.pageX - videoGrid.offsetLeft;
-            const walk = (x - startX) * 2;
-            videoGrid.scrollLeft = scrollLeftPos - walk;
-        });
-
-        videoGrid.addEventListener('click', (e) => {
-            if (hasMoved) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-        }, true);
 
         const searchBox = document.getElementById('searchBox');
         const clearSearchBtn = document.getElementById('clearSearch');
